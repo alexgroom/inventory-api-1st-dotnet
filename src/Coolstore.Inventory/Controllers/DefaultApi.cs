@@ -53,7 +53,7 @@ namespace Coolstore.Inventory.Controllers
             // return StatusCode(200, default(List<InventoryItem>));
 
             string exampleJson = null;
-            exampleJson = "[{\"itemId\":\"329299\",\"quantity\":35},{\"itemId\":\"329199\",\"quantity\":12},{\"itemId\":\"165613\",\"quantity\":45},{\"itemId\":\"165614\",\"quantity\":87},{\"itemId\":\"165954\",\"quantity\":43},{\"itemId\":\"444434\",\"quantity\":32},{\"itemId\":\"444435\",\"quantity\":53}]";
+            exampleJson = "[{\"itemId\":\"329299\",\"quantity\":35},{\"itemId\":\"329199\",\"quantity\":12},{\"itemId\":\"165613\",\"quantity\":45},{\"itemId\":\"165614\",\"quantity\":87},{\"itemId\":\"165954\",\"quantity\":43},{\"itemId\":\"444434\",\"quantity\":32},{\"itemId\":\"444435\",\"quantity\":53},{\"itemId\":\"444437\",\"quantity\":29},{\"itemId\":\"1000000\",\"quantity\":2}]";
             
             var example = exampleJson != null
             ? JsonConvert.DeserializeObject<List<InventoryItem>>(exampleJson)
