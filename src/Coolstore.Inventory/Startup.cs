@@ -13,11 +13,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting; // added for 3.1
-using Newtonsoft.Json;
-//using Swashbuckle.AspNetCore.Swagger;
-//using Swashbuckle.AspNetCore.SwaggerGen;
-//using Coolstore.Inventory.Filters;
-using Prometheus;
 
 namespace Coolstore.Inventory
 {
@@ -47,46 +42,13 @@ namespace Coolstore.Inventory
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services
-                .AddMvc()
-//                .SetCompatibilityVersion                (CompatibilityVersion.Version_2_1)
-/*                .AddJsonOptions(opts =>
-                {
-                    opts.JsonSerializerOptions.
-                    opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                    opts.SerializerSettings.Converters.Add(new StringEnumConverter
-                    {
-                        CamelCaseText = true
-                    });
-                })
-*/              
-;
-/*            services
-                .AddSwaggerGen(c =>
-                {
-                    c.SwaggerDoc("1.0.0", new Info
-                    {
-                        Version = "1.0.0",
-                        Title = "Inventory API v2",
-                        Description = "Inventory API v2 (ASP.NET Core 2.0)",
-                        Contact = new Contact()
-                        {
-                           Name = "OpenAPI-Generator Contributors",
-                           Url = "https://github.com/openapitools/openapi-generator",
-                           Email = ""
-                        },
-                        TermsOfService = ""
-                    });
-                    c.CustomSchemaIds(type => type.FriendlyId(true));
-                    c.DescribeAllEnumsAsStrings();
-                    c.IncludeXmlComments($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{Assembly.GetEntryAssembly().GetName().Name}.xml");
-                    // Sets the basePath property in the Swagger document generated
-                    c.DocumentFilter<BasePathFilter>("/api");
 
-                    // Include DataAnnotation attributes on Controller Action parameters as Swagger validation rules (e.g required, pattern, ..)
-                    // Use [ValidateModelState] on Actions to actually validate it in C# as well!
-                    c.OperationFilter<GeneratePathParamsValidationFilter>();
-                }); */
+            services.AddControllers().AddJsonOptions(options=> 
+            {  
+                  options.JsonSerializerOptions.IgnoreNullValues = true;
+            });
+            services.AddHealthChecks();
+            services.AddControllersWithViews();
         }
 
         /// <summary>
@@ -96,27 +58,21 @@ namespace Coolstore.Inventory
         /// <param name="env"></param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseHttpsRedirection();
 
-            // Prometheus support
-            app.UseMetricServer();
+            app.UseHealthChecks("/health");
+            app.UseRouting();
 
             app
-//                .UseMvc()
                 .UseDefaultFiles()
-                .UseStaticFiles()
-/*                .UseSwagger(c =>
-                {
-                    c.RouteTemplate = "swagger/{documentName}/openapi.json";
-                })
-                .UseSwaggerUI(c =>
-                {
-                    //TODO: Either use the SwaggerGen generated Swagger contract (generated from C# classes)
-                    c.SwaggerEndpoint("/swagger/1.0.0/openapi.json", "Inventory API v2");
+                .UseStaticFiles();
 
-                    //TODO: Or alternatively use the original Swagger contract that's included in the static files
-                    // c.SwaggerEndpoint("/openapi-original.json", "Inventory API v2 Original");
-                }) */;
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
 
 if (env.IsDevelopment())
             {

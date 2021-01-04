@@ -10,13 +10,10 @@
 
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-//using Swashbuckle.AspNetCore.Annotations;
-//using Swashbuckle.AspNetCore.SwaggerGen;
-using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using Coolstore.Inventory.Attributes;
 using Coolstore.Inventory.Models;
-using Prometheus;
+using Newtonsoft.Json;
 
 namespace Coolstore.Inventory.Controllers
 { 
@@ -25,18 +22,13 @@ namespace Coolstore.Inventory.Controllers
     /// </summary>
     public class DefaultApiController : ControllerBase
     { 
-         private Counter apiHttpRequestsTotalCounter;
+
+        private static string exampleJson = "[{\"itemId\":\"329299\",\"quantity\":35},{\"itemId\":\"329199\",\"quantity\":12},{\"itemId\":\"165613\",\"quantity\":45},{\"itemId\":\"165614\",\"quantity\":87},{\"itemId\":\"165954\",\"quantity\":43},{\"itemId\":\"444434\",\"quantity\":32},{\"itemId\":\"444435\",\"quantity\":53}]";
+        private static List<InventoryItem> exampleList = JsonConvert.DeserializeObject<List<InventoryItem>>(exampleJson);
 
         /// <summary>
         /// Define the controller
         /// </summary>
-
-        public DefaultApiController()
-        {
-            apiHttpRequestsTotalCounter = Metrics.CreateCounter("api_http_requests_total", "Counts get ...", new CounterConfiguration {
-                LabelNames = new[] { "api", "method", "endpoint" }
-            });
-        }
 
         /// <summary>
         /// Get all inventory items
@@ -46,23 +38,9 @@ namespace Coolstore.Inventory.Controllers
         [HttpGet]
         [Route("/api/inventory")]
         [ValidateModelState]
-//        [SwaggerOperation("InventoryGet")]
-//        [SwaggerResponse(statusCode: 200, type: typeof(List<InventoryItem>), description: "Should return an arry of InventoryItems")]
         public virtual IActionResult InventoryGet()
         { 
-            apiHttpRequestsTotalCounter.WithLabels("inventory", "GET", "/api/inventory").Inc();
-
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(List<InventoryItem>));
-
-            string exampleJson = null;
-            exampleJson = "[{\"itemId\":\"329299\",\"quantity\":35},{\"itemId\":\"329199\",\"quantity\":12},{\"itemId\":\"165613\",\"quantity\":45},{\"itemId\":\"165614\",\"quantity\":87},{\"itemId\":\"165954\",\"quantity\":43},{\"itemId\":\"444434\",\"quantity\":32},{\"itemId\":\"444435\",\"quantity\":53}]";
-            
-            var example = exampleJson != null
-            ? JsonConvert.DeserializeObject<List<InventoryItem>>(exampleJson)
-            : default(List<InventoryItem>);
-            //TODO: Change the data returned
-            return new ObjectResult(example);
+            return new ObjectResult(exampleList);
         }
 
         /// <summary>
@@ -75,26 +53,14 @@ namespace Coolstore.Inventory.Controllers
         [HttpGet]
         [Route("/api/inventory/{itemId}")]
         [ValidateModelState]
-//        [SwaggerOperation("InventoryItemIdGet")]
-//        [SwaggerResponse(statusCode: 200, type: typeof(InventoryItem), description: "Should return the item for the id provided")]
-//        [SwaggerResponse(statusCode: 404, type: typeof(GenericError), description: "Item not found")]
         public virtual IActionResult InventoryItemIdGet([FromRoute][Required]string itemId)
         { 
-             apiHttpRequestsTotalCounter.WithLabels("inventory", "GET", "/api/inventory/{itemId}").Inc();
+            // find the item in the list
+            var example = exampleList.Find(x => x.ItemId == itemId);
 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(InventoryItem));
+            if (example == null)
+                example = default(InventoryItem);
 
-            //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404, default(GenericError));
-
-            string exampleJson = null;
-            exampleJson = "{\n  \"itemId\" : \"329299\",\n  \"quantity\" : 35\n}";
-            
-            var example = exampleJson != null
-            ? JsonConvert.DeserializeObject<InventoryItem>(exampleJson)
-            : default(InventoryItem);
-            //TODO: Change the data returned
             return new ObjectResult(example);
         }
     }
