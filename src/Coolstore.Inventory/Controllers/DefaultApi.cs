@@ -23,7 +23,7 @@ namespace Coolstore.Inventory.Controllers
     public class DefaultApiController : ControllerBase
     { 
 
-        private static string exampleJson = "[{\"itemId\":\"100000\",\"quantity\":10},{\"itemId\":\"329299\",\"quantity\":35},{\"itemId\":\"329199\",\"quantity\":12},{\"itemId\":\"165613\",\"quantity\":45},{\"itemId\":\"165614\",\"quantity\":87},{\"itemId\":\"165954\",\"quantity\":43},{\"itemId\":\"444434\",\"quantity\":32},{\"itemId\":\"444435\",\"quantity\":53}]";
+        private static string exampleJson = "[{\"itemId\":\"100000\",\"quantity\":10},{\"itemId\":\"329299\",\"quantity\":35},{\"itemId\":\"329199\",\"quantity\":12},{\"itemId\":\"165613\",\"quantity\":45},{\"itemId\":\"165614\",\"quantity\":87},{\"itemId\":\"165954\",\"quantity\":43},{\"itemId\":\"444434\",\"quantity\":32},{\"itemId\":\"444435\",\"quantity\":53},{\"itemId\":\"444437\",\"quantity\":45}]";
         private static List<InventoryItem> exampleList = JsonConvert.DeserializeObject<List<InventoryItem>>(exampleJson);
 
         /// <summary>
